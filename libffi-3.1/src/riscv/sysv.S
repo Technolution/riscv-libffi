@@ -695,6 +695,7 @@ ffi_closure_asm:
     REG_S   a6,  A6_OFF2(sp)
     REG_S   a7,  A7_OFF2(sp)
     
+#ifndef __riscv_float_abi_soft
     # Store all possible float/double registers.
     fsd     fa0, FA0_OFF2(sp)
     fsd     fa1, FA1_OFF2(sp)
@@ -704,7 +705,8 @@ ffi_closure_asm:
     fsd     fa5, FA5_OFF2(sp)
     fsd     fa6, FA6_OFF2(sp)
     fsd     fa7, FA7_OFF2(sp)
-    
+#endif
+
     # Call ffi_closure_riscv_inner to do the real work.
     move    a0, t0 # Pointer to the ffi_closure
     addi    a1, sp, V0_OFF2
@@ -724,6 +726,7 @@ cls_retint32:
     lw      a0, V0_OFF2(sp)
     j       cls_epilogue
     
+#ifndef __riscv_float_abi_soft
 cls_retfloat:
     li      t0, FFI_TYPE_FLOAT
     bne     a0, t0, cls_retdouble
@@ -775,7 +778,8 @@ cls_retstruct_f_d:
     flw     fa0, V0_OFF2(sp)
     fld     fa1, V1_OFF2(sp)
     j       cls_epilogue
-    
+#endif
+
 cls_retstruct_small2:
     REG_L   a0, V0_OFF2(sp)
     REG_L   a1, V1_OFF2(sp)
